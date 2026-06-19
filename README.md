@@ -1,55 +1,51 @@
-# E-Commerce Backend System
+# E-Commerce Full-Stack System
 
-A production-ready RESTful Web API built using **Spring Boot 3**, **Spring Security**, and **JWT (JSON Web Tokens)** featuring Role-Based Access Control (RBAC). 
-
-This project simulates an online shopping platform containing authentication, product catalogs, categories, shopping carts, transactional checkouts with stock verification, and automatic inventory management.
+A complete, production-ready E-Commerce application featuring a **Spring Boot** backend and a modern **React (Vite)** frontend. It includes authentication, role-based access control (RBAC), product and category management, a shopping cart, transactional checkouts, and order management.
 
 ---
 
 ## 🛠️ Tech Stack & Dependencies
+
+### Backend
 * **Language:** Java 17
-* **Framework:** Spring Boot 3.2.5 (Spring MVC, Spring Data JPA, Spring Security)
-* **Database:** H2 In-Memory Database (configured for rapid development/testing)
-* **Token-based Security:** JSON Web Token (JJWT 0.11.5)
+* **Framework:** Spring Boot 3.2.5 (Spring Web, Spring Data JPA, Spring Security)
+* **Database:** MySQL 8.0
+* **Security:** JSON Web Token (JJWT 0.11.5)
 * **API Documentation:** SpringDoc OpenAPI / Swagger UI
-* **Other Tools:** Lombok (boilerplate reduction), BCrypt (password hashing)
+* **Other Tools:** Lombok, BCrypt Password Encoder
+
+### Frontend
+* **Framework:** React 18 (Bootstrapped with Vite)
+* **Routing:** React Router DOM
+* **HTTP Client:** Axios
+* **Styling:** Custom Vanilla CSS with responsive design and modern UI aesthetics
+* **Icons:** Lucide React
 
 ---
 
 ## 🚀 Key Features
 
 ### 🔒 1. Authentication & Security
-* Secure user registration and login endpoints.
-* Password hashing using **BCrypt Password Encoder**.
-* Stateless token-based security via **JWT**.
-* Custom filter (`JwtAuthFilter`) to intercept, decode, and validate requests.
-* **Role-Based Access Control (RBAC):** Dedicated permissions for `CUSTOMER` and `ADMIN` roles.
+* Secure user registration and login flows.
+* Password hashing using **BCrypt**.
+* Stateless token-based security via **JWT**, with claims including user roles and names.
+* **Role-Based Access Control (RBAC):** Dedicated permissions and UI views for `CUSTOMER` and `ADMIN` roles.
 
 ### 📦 2. Product & Category Management
-* Full CRUD endpoints for categories and products (Admin only).
-* Public endpoints to view and search the product catalog (accessible without login).
+* Full CRUD endpoints and UI interfaces for categories and products (Admin only).
+* Admins can create new categories on the fly, which instantly become available across the platform.
+* Public endpoints to view and search the product catalog without logging in.
 * Built-in server-side **Pagination**, **Sorting**, and **Keyword Searching**.
 
 ### 🛒 3. Shopping Cart Module
 * Interactive cart operations: Add products to cart, update quantity, and remove items.
-* Performs real-time inventory checks during cart additions.
+* Real-time inventory checks during cart additions.
 
 ### 💳 4. Order & Inventory Management
-* **Transactional Checkout:** Placing an order aggregates cart items, calculates total price, and clears the user's cart in a safe, single transaction (`@Transactional`).
+* **Transactional Checkout:** Placing an order aggregates cart items, calculates total price, clears the user's cart, and creates an order record in a safe, single transaction.
 * **Auto Stock Reduction:** Verifies stock levels prior to checkout and automatically decrements inventory.
-* Centralized exception handling to prevent double ordering or checking out out-of-stock items.
-
----
-
-## 📊 Database Schema (ERD Model)
-
-The database includes the following key tables:
-1. **users** (`id`, `name`, `email`, `password`, `role`)
-2. **categories** (`id`, `name`, `description`)
-3. **products** (`id`, `name`, `description`, `price`, `quantity`, `category_id`)
-4. **cart** (`id`, `user_id`, `product_id`, `quantity`)
-5. **orders** (`id`, `user_id`, `total_amount`, `status`, `order_date`)
-6. **order_items** (`id`, `order_id`, `product_id`, `quantity`, `price`)
+* **Order Tracking & Cancellation:** Customers can view their order history and cancel orders before they are shipped. Cancelled orders automatically restore product stock.
+* **Admin Order Fulfillment:** Admins can view all customer orders and update shipping statuses (Processing, Shipped, Delivered, Cancelled).
 
 ---
 
@@ -57,38 +53,36 @@ The database includes the following key tables:
 
 ### Prerequisites
 * Java JDK 17 or higher
-* Maven (optional, or use IDE tools)
+* Node.js (v16+) and npm
+* MySQL Server (running on port 3306)
 
-### Steps
-1. Open the project in your IDE (IntelliJ IDEA, Eclipse, etc.).
-2. Let the IDE download the Maven dependencies automatically.
-3. Run the main class: `src/main/java/com/ecommerce/EcommerceApplication.java`.
+### 1. Database Setup
+1. Open your MySQL client or command line.
+2. Create the database: `CREATE DATABASE ecommerce_db;`
+3. Ensure your MySQL credentials match those in `backend/src/main/resources/application.properties` (Default: Username: `root`, Password: `test`).
+
+### 2. Running the Backend
+1. Open the `backend` folder in your Java IDE (IntelliJ, Eclipse, etc.).
+2. Allow Maven to download dependencies.
+3. Run `src/main/java/com/ecommerce/EcommerceApplication.java`.
 4. The server will start on port `8080`.
+*(Note: The backend automatically seeds sample categories, products, an admin account, and a customer account on the first run).*
+
+### 3. Running the Frontend
+1. Open a terminal and navigate to the `frontend` directory.
+2. Install dependencies: `npm install`
+3. Start the development server: `npm run dev`
+4. The React application will be accessible at `http://localhost:5173`.
 
 ---
 
-## 🧪 Testing the APIs
+## 🧪 Testing the Application
 
-### 1. Interactive Swagger Documentation
-Open the following link in your browser to view and test all REST endpoints:
-👉 **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
-
-### 2. Seeded Test Accounts
-On startup, a data initializer automatically seeds the database with the following accounts:
+### Seeded Test Accounts
+On startup, a data initializer automatically seeds the database with the following accounts for immediate testing:
 * **Admin Account:** `admin@ecommerce.com` / Password: `admin123`
 * **Customer Account:** `customer@ecommerce.com` / Password: `customer123`
 
-### 3. How to Authenticate in Swagger
-1. Find the `POST /api/auth/login` endpoint.
-2. Enter the login credentials (admin or customer) and execute the request.
-3. Copy the returned `"token"` string.
-4. Click the **Authorize** button at the top right of the Swagger UI page.
-5. Enter: `Bearer <your_copied_token>` and click Authorize.
-6. Now you can make authorized requests to restricted endpoints!
-
-### 4. Database Console (H2)
-To inspect the physical tables and run database queries:
-* **H2 Console URL:** **[http://localhost:8080/h2-console](http://localhost:8080/h2-console)**
-* **JDBC URL:** `jdbc:h2:mem:ecommerce_db`
-* **User Name:** `sa`
-* **Password:** *(leave blank)*
+### Interactive API Documentation (Swagger)
+You can test the raw backend endpoints directly using the built-in Swagger UI:
+👉 **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
